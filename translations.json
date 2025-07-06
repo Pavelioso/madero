@@ -7,16 +7,28 @@
       "place": "Our Location",
       "pricelist": "Pricing",
       "contact": "Contact"
+    },
+    "pages": {
+      "onas": {
+        "title": "About Us",
+        "desc": "This is the About Us page."
+      }
     }
   },
   "cz": {
     "title": "Madero Petrovice",
     "menu": {
-      "about": "O n\u00e1s",
-      "massages": "Mas\u00e1\u017ee",
+      "about": "O nás",
+      "massages": "Masáže",
       "place": "Provozovna",
-      "pricelist": "Cen\u00edk",
+      "pricelist": "Ceník",
       "contact": "Kontakt"
+    },
+    "pages": {
+      "onas": {
+        "title": "O nás",
+        "desc": "Toto je stránka O nás."
+      }
     }
   }
 }

@@ -1,1 +1,5 @@
-<section><h1>About Us</h1><p>This is the About Us page.</p></section>
+
+<section x-data>
+  <h1 x-text="$root.translations[$root.lang]?.pages?.onas?.title || 'About Us'"></h1>
+  <p x-text="$root.translations[$root.lang]?.pages?.onas?.desc || 'This is the About Us page.'"></p>
+</section>

@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title x-text="translations[lang]?.title || 'Madero Petrovice'">Madero Petrovice</title>
-  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <script src="https://unpkg.com/alpinejs" defer></script>
   <style>
     body { margin: 0; font-family: sans-serif; }
@@ -44,14 +43,44 @@
     </div>
   </nav>
 
-  <main id="main-content">
-    <!-- HTMX-loaded content will appear here -->
+  <main>
+    
+<section x-show="activePage === 'onas'" x-data>
+  <h1 x-text="translations[lang]?.pages?.onas?.title || 'Onas'"></h1>
+  <p x-text="translations[lang]?.pages?.onas?.desc || 'This is the Onas page.'"></p>
+</section>
+
+
+<section x-show="activePage === 'masaze'" x-data>
+  <h1 x-text="translations[lang]?.pages?.masaze?.title || 'Masaze'"></h1>
+  <p x-text="translations[lang]?.pages?.masaze?.desc || 'This is the Masaze page.'"></p>
+</section>
+
+
+<section x-show="activePage === 'provozovna'" x-data>
+  <h1 x-text="translations[lang]?.pages?.provozovna?.title || 'Provozovna'"></h1>
+  <p x-text="translations[lang]?.pages?.provozovna?.desc || 'This is the Provozovna page.'"></p>
+</section>
+
+
+<section x-show="activePage === 'cenik'" x-data>
+  <h1 x-text="translations[lang]?.pages?.cenik?.title || 'Cenik'"></h1>
+  <p x-text="translations[lang]?.pages?.cenik?.desc || 'This is the Cenik page.'"></p>
+</section>
+
+
+<section x-show="activePage === 'kontakt'" x-data>
+  <h1 x-text="translations[lang]?.pages?.kontakt?.title || 'Kontakt'"></h1>
+  <p x-text="translations[lang]?.pages?.kontakt?.desc || 'This is the Kontakt page.'"></p>
+</section>
+
   </main>
 
   <script>
     function app() {
       return {
         lang: 'en',
+        activePage: 'onas',
         translations: {},
         menuOpen: false,
 
@@ -59,10 +88,6 @@
           this.loadTranslations();
           window.addEventListener('hashchange', () => this.initFromURL());
           this.initFromURL();
-
-          document.body.addEventListener('htmx:afterSwap', () => {
-            Alpine.mutate(() => {});
-          });
         },
 
         initFromURL() {
@@ -71,26 +96,27 @@
           const params = new URLSearchParams(paramPart || '');
           const urlLang = params.get('lang');
           if (urlLang) this.lang = urlLang;
-          this.navigate(page, false);
+          this.activePage = page;
         },
 
         async loadTranslations() {
           const res = await fetch('/translations.json');
           const json = await res.json();
           this.translations = json;
-          Alpine.mutate(() => {});
         },
 
         changeLanguage() {
-          const [pagePart] = location.hash.replace(/^#\/?/, '').split('?');
-          this.navigate(pagePart || 'onas');
+          this.updateHash();
         },
 
-        navigate(page, pushState = true) {
-          const hash = `#/${page}?lang=${this.lang}`;
-          if (pushState) location.hash = hash;
-          htmx.ajax('GET', `pages/${page}.html`, '#main-content');
+        navigate(page) {
+          this.activePage = page;
+          this.updateHash();
           this.menuOpen = false;
+        },
+
+        updateHash() {
+          location.hash = `#/${this.activePage}?lang=${this.lang}`;
         }
       };
     }
