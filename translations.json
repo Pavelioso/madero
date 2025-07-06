@@ -1,0 +1,22 @@
+{
+  "en": {
+    "title": "Madero Petrovice",
+    "menu": {
+      "about": "About Us",
+      "massages": "Massages",
+      "place": "Our Location",
+      "pricelist": "Pricing",
+      "contact": "Contact"
+    }
+  },
+  "cz": {
+    "title": "Madero Petrovice",
+    "menu": {
+      "about": "O n\u00e1s",
+      "massages": "Mas\u00e1\u017ee",
+      "place": "Provozovna",
+      "pricelist": "Cen\u00edk",
+      "contact": "Kontakt"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app" x-init="init()" :lang="lang">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title x-text="translations[lang]?.title || 'Madero Petrovice'">Madero Petrovice</title>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    header img { width: 100%; height: auto; display: block; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #eee; }
+    nav ul { display: flex; list-style: none; padding: 0; margin: 0; gap: 1rem; }
+    nav li { cursor: pointer; }
+    .burger { display: none; cursor: pointer; }
+    .lang-switcher { margin-left: 1rem; }
+    @media (max-width: 768px) {
+      header img { display: none; }
+      nav ul { display: none; flex-direction: column; }
+      nav ul.open { display: flex; }
+      .burger { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="placeholder-banner.jpg" alt="Banner" />
+  </header>
+
+  <nav>
+    <div class="burger" @click="menuOpen = !menuOpen">&#9776;</div>
+    <ul :class="{ open: menuOpen }">
+      <li @click="navigate('onas')" x-text="translations[lang]?.menu.about || 'About Us'"></li>
+      <li @click="navigate('masaze')" x-text="translations[lang]?.menu.massages || 'Massages'"></li>
+      <li @click="navigate('provozovna')" x-text="translations[lang]?.menu.place || 'Our Location'"></li>
+      <li @click="navigate('cenik')" x-text="translations[lang]?.menu.pricelist || 'Pricing'"></li>
+      <li @click="navigate('kontakt')" x-text="translations[lang]?.menu.contact || 'Contact'"></li>
+    </ul>
+    <div class="lang-switcher">
+      <select x-model="lang" @change="changeLanguage">
+        <option value="en">EN</option>
+        <option value="cz">CZ</option>
+      </select>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <!-- HTMX-loaded content will appear here -->
+  </main>
+
+  <script>
+    function app() {
+      return {
+        lang: 'en',
+        translations: {},
+        menuOpen: false,
+
+        init() {
+          this.loadTranslations();
+          window.addEventListener('hashchange', () => this.initFromURL());
+          this.initFromURL();
+
+          document.body.addEventListener('htmx:afterSwap', () => {
+            Alpine.mutate(() => {});
+          });
+        },
+
+        initFromURL() {
+          const [pagePart, paramPart] = location.hash.replace(/^#\/?/, '').split('?');
+          const page = pagePart || 'onas';
+          const params = new URLSearchParams(paramPart || '');
+          const urlLang = params.get('lang');
+          if (urlLang) this.lang = urlLang;
+          this.navigate(page, false);
+        },
+
+        async loadTranslations() {
+          const res = await fetch('/translations.json');
+          const json = await res.json();
+          this.translations = json;
+          Alpine.mutate(() => {});
+        },
+
+        changeLanguage() {
+          const [pagePart] = location.hash.replace(/^#\/?/, '').split('?');
+          this.navigate(pagePart || 'onas');
+        },
+
+        navigate(page, pushState = true) {
+          const hash = `#/${page}?lang=${this.lang}`;
+          if (pushState) location.hash = hash;
+          htmx.ajax('GET', `pages/${page}.html`, '#main-content');
+          this.menuOpen = false;
+        }
+      };
+    }
+  </script>
+</body>
+</html>
