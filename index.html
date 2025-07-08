@@ -1,125 +1,129 @@
 <!DOCTYPE html>
-<html lang="en" x-data="app" x-init="init()" :lang="lang">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title x-text="translations[lang]?.title || 'Madero Petrovice'">Madero Petrovice</title>
-  <script src="https://unpkg.com/alpinejs" defer></script>
-  <style>
-    body { margin: 0; font-family: sans-serif; }
-    header img { width: 100%; height: auto; display: block; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #eee; }
-    nav ul { display: flex; list-style: none; padding: 0; margin: 0; gap: 1rem; }
-    nav li { cursor: pointer; }
-    .burger { display: none; cursor: pointer; }
-    .lang-switcher { margin-left: 1rem; }
-    @media (max-width: 768px) {
-      header img { display: none; }
-      nav ul { display: none; flex-direction: column; }
-      nav ul.open { display: flex; }
-      .burger { display: block; }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <img src="placeholder-banner.jpg" alt="Banner" />
-  </header>
+<html lang="en" :lang="lang">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title x-text="translations[lang]?.title || 'Madero Petrovice'">Madero
+      Petrovice</title>
 
-  <nav>
-    <div class="burger" @click="menuOpen = !menuOpen">&#9776;</div>
-    <ul :class="{ open: menuOpen }">
-      <li @click="navigate('onas')" x-text="translations[lang]?.menu.about || 'About Us'"></li>
-      <li @click="navigate('masaze')" x-text="translations[lang]?.menu.massages || 'Massages'"></li>
-      <li @click="navigate('provozovna')" x-text="translations[lang]?.menu.place || 'Our Location'"></li>
-      <li @click="navigate('cenik')" x-text="translations[lang]?.menu.pricelist || 'Pricing'"></li>
-      <li @click="navigate('kontakt')" x-text="translations[lang]?.menu.contact || 'Contact'"></li>
-    </ul>
-    <div class="lang-switcher">
-      <select x-model="lang" @change="changeLanguage">
-        <option value="en">EN</option>
-        <option value="cz">CZ</option>
-      </select>
-    </div>
-  </nav>
-
-  <main>
-    
-<section x-show="activePage === 'onas'" x-data>
-  <h1 x-text="translations[lang]?.pages?.onas?.title || 'Onas'"></h1>
-  <p x-text="translations[lang]?.pages?.onas?.desc || 'This is the Onas page.'"></p>
-</section>
-
-
-<section x-show="activePage === 'masaze'" x-data>
-  <h1 x-text="translations[lang]?.pages?.masaze?.title || 'Masaze'"></h1>
-  <p x-text="translations[lang]?.pages?.masaze?.desc || 'This is the Masaze page.'"></p>
-</section>
-
-
-<section x-show="activePage === 'provozovna'" x-data>
-  <h1 x-text="translations[lang]?.pages?.provozovna?.title || 'Provozovna'"></h1>
-  <p x-text="translations[lang]?.pages?.provozovna?.desc || 'This is the Provozovna page.'"></p>
-</section>
-
-
-<section x-show="activePage === 'cenik'" x-data>
-  <h1 x-text="translations[lang]?.pages?.cenik?.title || 'Cenik'"></h1>
-  <p x-text="translations[lang]?.pages?.cenik?.desc || 'This is the Cenik page.'"></p>
-</section>
-
-
-<section x-show="activePage === 'kontakt'" x-data>
-  <h1 x-text="translations[lang]?.pages?.kontakt?.title || 'Kontakt'"></h1>
-  <p x-text="translations[lang]?.pages?.kontakt?.desc || 'This is the Kontakt page.'"></p>
-</section>
-
-  </main>
-
-  <script>
-    function app() {
-      return {
-        lang: 'en',
-        activePage: 'onas',
-        translations: {},
-        menuOpen: false,
-
-        init() {
-          this.loadTranslations();
-          window.addEventListener('hashchange', () => this.initFromURL());
-          this.initFromURL();
-        },
-
-        initFromURL() {
-          const [pagePart, paramPart] = location.hash.replace(/^#\/?/, '').split('?');
-          const page = pagePart || 'onas';
-          const params = new URLSearchParams(paramPart || '');
-          const urlLang = params.get('lang');
-          if (urlLang) this.lang = urlLang;
-          this.activePage = page;
-        },
-
-        async loadTranslations() {
-          const res = await fetch('/translations.json');
-          const json = await res.json();
-          this.translations = json;
-        },
-
-        changeLanguage() {
-          this.updateHash();
-        },
-
-        navigate(page) {
-          this.activePage = page;
-          this.updateHash();
-          this.menuOpen = false;
-        },
-
-        updateHash() {
-          location.hash = `#/${this.activePage}?lang=${this.lang}`;
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sunuwar: ['"Noto Sans Sunuwar"', 'sans-serif']
+            }
+          }
         }
       };
-    }
-  </script>
-</body>
+    </script>
+
+    <!-- Alpine + Translations -->
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="/translations.js"></script>
+
+    <!-- Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sunuwar&display=swap"
+      rel="stylesheet" />
+
+    <!-- Optional anti-flash -->
+    <style>
+      [x-cloak] { display: none; }
+      body { background-color: #EEEDE9; }
+    </style>
+  </head>
+
+  <body x-data="app" x-init="init()" :lang="lang" class="font-sans">
+
+    <!-- Header -->
+    <header class="bg-[#EEEDE9] py-2">
+      <img src="assets/banner.jpg" alt="Banner"
+        class="mx-auto max-h-32 object-contain" />
+    </header>
+
+    <!-- Navigation -->
+    <nav
+      class="bg-transparent px-6 py-4 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12">
+      <ul
+        class="font-sunuwar flex flex-col md:flex-row gap-4 text-sm font-semibold uppercase tracking-wide text-center">
+        <li @click="navigate('onas')"
+          class="cursor-pointer hover:text-green-600"
+          x-text="translations[lang]?.menu.about"></li>
+        <li @click="navigate('masaze')"
+          class="cursor-pointer hover:text-green-600"
+          x-text="translations[lang]?.menu.massages"></li>
+        <li @click="navigate('provozovna')"
+          class="cursor-pointer hover:text-green-600"
+          x-text="translations[lang]?.menu.place"></li>
+        <li @click="navigate('cenik')"
+          class="cursor-pointer hover:text-green-600"
+          x-text="translations[lang]?.menu.pricelist"></li>
+        <li @click="navigate('kontakt')"
+          class="cursor-pointer hover:text-green-600"
+          x-text="translations[lang]?.menu.contact"></li>
+      </ul>
+      <div class="mt-2 md:mt-0">
+        <select x-model="lang" @change="changeLanguage"
+          class="border border-gray-300 rounded px-2 py-1 text-sm">
+          <option value="en">EN</option>
+          <option value="cz">CZ</option>
+        </select>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="px-6 py-10 max-w-4xl mx-auto space-y-12">
+      <section x-ref="content" x-cloak></section>
+    </main>
+
+    <!-- Alpine App -->
+    <script>
+      function app() {
+        return {
+          lang: 'en',
+          activePage: 'onas',
+          translations: {},
+          async init() {
+            this.translations = window.TRANSLATIONS;
+            this.initFromURL();
+            await this.loadPage(this.activePage);
+            window.addEventListener('hashchange', () => {
+              this.initFromURL();
+              this.loadPage(this.activePage);
+            });
+          },
+          initFromURL() {
+            const [pagePart, paramPart] = location.hash.replace(/^#\/?/, '').split('?');
+            const page = pagePart || 'onas';
+            const params = new URLSearchParams(paramPart || '');
+            const urlLang = params.get('lang');
+            if (urlLang) this.lang = urlLang;
+            this.activePage = page;
+          },
+          async loadPage(page) {
+  const res = await fetch(`/pages/${page}.html`);
+  const html = await res.text();
+
+  // Inject the HTML as-is so Alpine expressions inherit from the parent app
+  this.$refs.content.innerHTML = html;
+  Alpine.initTree(this.$refs.content);
+},
+
+          changeLanguage() {
+            this.updateHash();
+          },
+          navigate(page) {
+            this.activePage = page;
+            this.updateHash();
+          },
+          updateHash() {
+            location.hash = `#/${this.activePage}?lang=${this.lang}`;
+          }
+        };
+      }
+    </script>
+  </body>
 </html>
